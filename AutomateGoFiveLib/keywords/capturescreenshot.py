@@ -69,7 +69,7 @@ class CaptureScreenShot:
         
     def _get_screenshot_paths(self, filename):
         filename = filename.replace('/', os.sep)
-        logdir = self._get_log_dir()
+        logdir = log._get_log_dir()
         path = os.path.join(logdir, filename)
         link = robot.utils.get_link_path(path, logdir)
         return path, link
