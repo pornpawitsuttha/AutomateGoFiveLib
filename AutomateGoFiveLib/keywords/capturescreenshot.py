@@ -46,47 +46,30 @@ class CaptureScreenShot:
 
         แก้กลับเป็น ver 1.4 ก่อน เพราะต้องใช้รูปใน line noti
         """
-        path, link = self._get_screenshot_paths(filename)
 
-        if hasattr(cache_app._current_application(), 'get_screenshot_as_file'):
-            cache_app._current_application().get_screenshot_as_file(path)
+        if filename:
+            path, link = self._get_screenshot_paths(filename)
+
+            if hasattr(cache_app._current_application(), 'get_screenshot_as_file'):
+                cache_app._current_application().get_screenshot_as_file(path)
+            else:
+                cache_app._current_application().save_screenshot(path)
+
+            # Image is shown on its own row and thus prev row is closed on purpose
+            log._html('</td></tr><tr><td colspan="3"><a href="%s">'
+                       '<img src="%s" width="800px"></a>' % (link, link))
+            return path
         else:
-            cache_app._current_application().save_screenshot(path)
-
-        # Image is shown on its own row and thus prev row is closed on purpose
-        log._html('</td></tr><tr><td colspan="3"><a href="%s">'
-                   '<img src="%s" width="800px"></a>' % (link, link))
-        return path
-
-        #แก้กลับเป็น ver 1.4 ก่อน เพราะต้องใช้รูปใน line noti
-        # if filename:
-        #     path, link = self._get_screenshot_paths(filename)
-
-        #     if hasattr(cache_app._current_application(), 'get_screenshot_as_file'):
-        #         cache_app._current_application().get_screenshot_as_file(path)
-        #     else:
-        #         cache_app._current_application().save_screenshot(path)
-
-        #     # Image is shown on its own row and thus prev row is closed on purpose
-        #     log._html('</td></tr><tr><td colspan="3"><a href="%s">'
-        #                '<img src="%s" width="800px"></a>' % (link, link))
-        #     return path
-        # else:
-        #     base64_screenshot = cache_app._current_application().get_screenshot_as_base64()
-        #     log._html('</td></tr><tr><td colspan="3">'
-        #                '<img src="data:image/png;base64, %s" width="800px">' % base64_screenshot)
-        #     return None
+            base64_screenshot = cache_app._current_application().get_screenshot_as_base64()
+            log._html('</td></tr><tr><td colspan="3">'
+                       '<img src="data:image/png;base64, %s" width="800px">' % base64_screenshot)
+            return None
 
     #Private_Function
         
     def _get_screenshot_paths(self, filename):
-        if not filename:
-            self._screenshot_indexs += 1
-            filename = 'appium-screenshot-%d.png' % self._screenshot_indexs
-            print(self._screenshot_indexs)
-        else:
-            filename = filename.replace('/', os.sep)
-        logdir = log._get_log_dir()
+        filename = filename.replace('/', os.sep)
+        logdir = self._get_log_dir()
         path = os.path.join(logdir, filename)
         link = robot.utils.get_link_path(path, logdir)
         return path, link
